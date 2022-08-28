@@ -5,6 +5,8 @@ import cors from 'cors'
 import * as bodyParser from 'body-parser'
 import * as dotenv from "dotenv"
 
+import { auth as AuthRoute } from "./routes/auth";
+
 export class Server{
     public app: express.Application
     public logger: Consola = consola
@@ -44,18 +46,20 @@ export class Server{
         this.app.get('/', (req, res) => {
             res.json({success: true, message: 'Welcome to p2p wallet. Login to continue.'})
         })
+
+        this.app.use('/api/v1/auth', AuthRoute)
     }
 
-    public async sendQuery(): Promise<void>{
-        let result = await this.prisma.user.create({
-            data:{
-                email: "testuser@gmail.com",
-                name: "Test User"
-            }
-        })
+    // public async sendQuery(): Promise<void>{
+    //     let result = await this.prisma.user.create({
+    //         data:{
+    //             email: "testuser@gmail.com",
+    //             name: "Test User"
+    //         }
+    //     })
 
-        console.log(result);
+    //     console.log(result);
         
-    }
+    // }
 
 }

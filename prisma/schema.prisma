@@ -11,27 +11,27 @@ datasource db {
 }
 
 
-model User {
+model user {
   id Int @id @default(autoincrement())
-username String @unique
-email String @unique
-password String
-pin String
-first_name String
-last_name String
-address String
-account Accounts?
-phone_number String
-created_at DateTime @default(now())
-updated_at DateTime
+  username String @unique
+  email String @unique
+  password String
+  // pin String
+  // first_name String
+  // last_name String
+  // address String
+  // account account?
+  // phone_number String
+  // created_at DateTime @default(now())
+  // updated_at DateTime
 }
 
-model Accounts{
-  id Int @id @default(autoincrement())
-  account_number String
-  balance Decimal @default(0)
-  user User @relation(fields: [user_id], references: [id])
-  user_id Int @unique
-  created_at DateTime @default(now())
-  updated_at DateTime
-}
+// model account{
+//   id Int @id @default(autoincrement())
+//   account_number String
+//   balance Decimal @default(0)
+//   user user @relation(fields: [user_id], references: [id])
+//   user_id Int @unique
+//   created_at DateTime @default(now())
+//   updated_at DateTime
+// }
