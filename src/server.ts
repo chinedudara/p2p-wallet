@@ -1,4 +1,5 @@
 import express from 'express'
+import { PrismaClient } from '@prisma/client'
 import consola, { Consola} from 'consola'
 import cors from 'cors'
 import * as bodyParser from 'body-parser'
@@ -7,6 +8,7 @@ import * as dotenv from "dotenv"
 export class Server{
     public app: express.Application
     public logger: Consola = consola
+    private prisma: PrismaClient = new PrismaClient ()
 
     public constructor(){
         this.app = express()
@@ -42,6 +44,18 @@ export class Server{
         this.app.get('/', (req, res) => {
             res.json({success: true, message: 'Welcome to p2p wallet. Login to continue.'})
         })
+    }
+
+    public async sendQuery(): Promise<void>{
+        let result = await this.prisma.user.create({
+            data:{
+                email: "testuser@gmail.com",
+                name: "Test User"
+            }
+        })
+
+        console.log(result);
+        
     }
 
 }
