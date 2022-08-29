@@ -1,5 +1,5 @@
-import { accountRoute } from './routes/account';
-import { userRoute } from './routes/user';
+import { accountRoute } from './routes/account.routes';
+import { userRoute } from './routes/user.routes';
 import { isAuthenticated } from './middlewares/isAuthenticated';
 import express from 'express'
 import { PrismaClient } from '@prisma/client'
@@ -8,7 +8,7 @@ import cors from 'cors'
 // import * as bodyParser from 'body-parser'
 import * as dotenv from "dotenv"
 
-import { auth as AuthRoute } from "./routes/auth";
+import { auth as AuthRoute } from "./routes/auth.routes";
 
 export class Server{
     public app: express.Application
