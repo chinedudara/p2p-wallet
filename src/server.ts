@@ -1,8 +1,11 @@
+import { accountRoute } from './routes/account';
+import { userRoute } from './routes/user';
+import { isAuthenticated } from './middlewares/isAuthenticated';
 import express from 'express'
 import { PrismaClient } from '@prisma/client'
 import consola, { Consola} from 'consola'
 import cors from 'cors'
-import * as bodyParser from 'body-parser'
+// import * as bodyParser from 'body-parser'
 import * as dotenv from "dotenv"
 
 import { auth as AuthRoute } from "./routes/auth";
@@ -27,8 +30,8 @@ export class Server{
     }
 
     private setConfig(){
-        this.app.use(bodyParser.json())
-        this.app.use(bodyParser.urlencoded({extended:true}))
+        this.app.use(express.json())
+        this.app.use(express.urlencoded({extended:false}))
         this.app.use(cors())
 
         dotenv.config()
@@ -36,7 +39,7 @@ export class Server{
 
     private setRequestLogger(){
         this.app.use(async (req, res, next) => {
-            console.log(`[${req.method} - ${req.path}]`)
+            this.logger.info(`${new Date().toString()} :: [${req.method} - ${req.path}]`)
 
             next()
         })
@@ -48,6 +51,8 @@ export class Server{
         })
 
         this.app.use('/api/v1/auth', AuthRoute)
+        this.app.use('/api/v1/user', isAuthenticated, userRoute)
+        this.app.use('/api/v1/account', isAuthenticated, accountRoute)
     }
 
     // public async sendQuery(): Promise<void>{
