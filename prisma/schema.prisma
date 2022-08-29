@@ -16,22 +16,40 @@ model user {
   username String @unique
   email String @unique
   password String
-  // pin String
-  // first_name String
-  // last_name String
-  // address String
-  // account account?
-  // phone_number String
-  // created_at DateTime @default(now())
-  // updated_at DateTime
+  pin String?
+  first_name String?
+  last_name String?
+  home_address String?
+  account account?
+  phone_number String?
+  created_at DateTime? @default(now())
+  updated_at DateTime?
 }
 
-// model account{
-//   id Int @id @default(autoincrement())
-//   account_number String
-//   balance Decimal @default(0)
-//   user user @relation(fields: [user_id], references: [id])
-//   user_id Int @unique
-//   created_at DateTime @default(now())
-//   updated_at DateTime
-// }
+model account{
+  id Int @id @default(autoincrement())
+  account_number String
+  balance Decimal @default(0)
+  user user @relation(fields: [user_id], references: [id])
+  user_id Int @unique
+  created_at DateTime @default(now())
+  updated_at DateTime?
+}
+
+model deposits{
+  id Int @id @default(autoincrement())
+  account_num String
+  amount Decimal
+  transaction_ref String
+  balance Decimal
+  created_at DateTime @default(now())
+}
+
+model transfers{
+  id Int @id @default(autoincrement())
+  account_num String
+  amount Decimal
+  transaction_ref String
+  balance Decimal
+  created_at DateTime @default(now())
+}

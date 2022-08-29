@@ -1,10 +1,12 @@
 import { Router, Request, Response, NextFunction } from "express";
-import { PrismaClient } from "@prisma/client";
 import jwt from "jsonwebtoken";
 import argon2 from 'argon2'
 
+import { PrismaClient } from '@prisma/client'
+const prisma = new PrismaClient()
+
 export const auth = Router()
-const prisma: PrismaClient = new PrismaClient()
+const AUTH_SECRET: any = process.env.AUTH_SECRET
 
 auth.post('/login', async (req: Request, res: Response) => {
     const { username, password } : { username: string, password: string } = req.body;
@@ -23,7 +25,7 @@ auth.post('/login', async (req: Request, res: Response) => {
 
     try {
         if(await argon2.verify(user.password, password)){
-            const accessToken = jwt.sign({userId: user.id}, "secret")
+            const accessToken = jwt.sign({userId: user.id}, AUTH_SECRET)
             return res.status(200).json({
                 success: true,
                 accessToken: accessToken
@@ -48,7 +50,7 @@ auth.post('/login', async (req: Request, res: Response) => {
 })
 
 auth.post('/register', async (req: Request, res: Response) => {
-    const { email, username, password } : { email: string, username: string, password: string }= req.body;
+    const { email, username, password } = req.body;
     const result = await prisma.user.findUnique({
         where: { username }
     })
@@ -64,15 +66,21 @@ auth.post('/register', async (req: Request, res: Response) => {
 
     const hashedPassword = await argon2.hash(password)
 
+    const genAcc = Math.floor(((Math.random() * 10000000000 + 1000000000) % 10000000000)).toString()
     const user = await prisma.user.create({
         data: {
             username: username,
             email: email,
-            password: hashedPassword
+            password: hashedPassword,
+            account: {
+                create: {
+                    account_number: genAcc
+                }
+            }
         }
     })
 
-    const accessToken = jwt.sign({userId: user.id}, "secret")
+    const accessToken = jwt.sign({userId: user.id}, AUTH_SECRET)
     return res.status(200).json({
         success: true,
         accessToken: accessToken
