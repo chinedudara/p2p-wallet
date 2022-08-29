@@ -1,10 +1,12 @@
 import { user } from "@prisma/client"
+import { Request } from "express";
 
-export {}
-declare global{
-    namespace Express{
-        interface Request{
-            user?: user
-        }
+export interface TestReq extends Request {
+    user?: {
+        id: number,
+        email: string,
+        username: string,
+        account_number: string | null,
+        balance: decimal
     }
 }
