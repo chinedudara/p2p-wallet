@@ -21,6 +21,8 @@ model user {
   last_name String?
   home_address String?
   account account?
+  deposits deposit_log[]
+  transfers transfer_log[]
   phone_number String?
   created_at DateTime? @default(now())
   updated_at DateTime?
@@ -36,20 +38,27 @@ model account{
   updated_at DateTime?
 }
 
-model deposits{
+model deposit_log{
   id Int @id @default(autoincrement())
-  account_num String
+  user_id Int
+  user user @relation(fields: [user_id], references: [id])
+  account_number String
   amount Decimal
   transaction_ref String
   balance Decimal
+  status String
   created_at DateTime @default(now())
 }
 
-model transfers{
+model transfer_log{
   id Int @id @default(autoincrement())
-  account_num String
+  user_id Int
+  user user @relation(fields: [user_id], references: [id])
+  source_account String
+  destination_account String
   amount Decimal
   transaction_ref String
   balance Decimal
+  status String
   created_at DateTime @default(now())
 }
