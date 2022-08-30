@@ -30,7 +30,10 @@ class AuthController {
       if (await argon2.verify(user.password, password)) {
         const accessToken = jwt.sign(
           { userId: user.id },
-          common_config.tokenSecret
+          common_config.tokenSecret,
+          {
+            expiresIn: common_config.tokenTimespan
+          }
         );
         return res.status(200).json({
           success: true,
@@ -61,8 +64,6 @@ class AuthController {
       home_address,
       phone_number,
     } = req.body;
-
-    console.log('im here');
     
     const result = await UserService.CheckUserExist(username, email);
 
@@ -73,7 +74,6 @@ class AuthController {
       });
     }
 
-    console.log('im here 2', result);
     const hashedPassword = await argon2.hash(password);
 
     const genAcc = await AccountService.generateAccountNumber();
@@ -91,7 +91,10 @@ class AuthController {
 
     const accessToken = jwt.sign(
       { userId: user.id },
-      common_config.tokenSecret
+      common_config.tokenSecret,
+      {
+        expiresIn: common_config.tokenTimespan
+      }
     );
     return res.status(200).json({
       success: true,

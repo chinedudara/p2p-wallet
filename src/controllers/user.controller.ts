@@ -13,6 +13,7 @@ class UserController {
         // }
     
         const result = await UserService.getUserByUsername(req.user?.username || "")
+        delete result.password;
         console.log(req.user);
         
         res.status(HttpCodes.OK).json(result)

@@ -3,6 +3,7 @@ import { userRoute } from './routes/user.routes';
 import { paymentRoute } from './routes/payment.routes';
 import { isAuthenticated } from './middlewares/auth.middleware';
 import express from 'express';
+import dayjs from "dayjs";
 import consola, { Consola} from 'consola';
 import cors from 'cors';
 import * as dotenv from "dotenv";
@@ -41,7 +42,7 @@ export class Server{
 
     private setRequestLogger(){
         this.app.use(async (req, res, next) => {
-            this.logger.info(`${new Date().toString()} :: [${req.method} - ${req.path}]`)
+            this.logger.info(`${dayjs().format()} :: [${req.method} - ${req.path}]`)
 
             next()
         })
