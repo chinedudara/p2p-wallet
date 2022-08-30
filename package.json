@@ -8,7 +8,8 @@
     "start": "node ./dist/app.js",
     "lint": "prettier --write",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "postinstall": "tsc"
+    "postinstall": "tsc",
+    "build": "npx prisma generate"
   },
   "keywords": [],
   "author": "Chinedu Okechukwu-Dara",
