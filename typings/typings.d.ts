@@ -1,7 +1,7 @@
 import { user } from "@prisma/client"
 import { Request } from "express";
 
-export interface TestReq extends Request {
+export interface RequestAuth extends Request {
     user?: {
         id: number,
         email: string,
