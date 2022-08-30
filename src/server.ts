@@ -1,28 +1,30 @@
 import { accountRoute } from './routes/account.routes';
 import { userRoute } from './routes/user.routes';
-import { isAuthenticated } from './middlewares/isAuthenticated';
-import express from 'express'
-import { PrismaClient } from '@prisma/client'
-import consola, { Consola} from 'consola'
-import cors from 'cors'
-// import * as bodyParser from 'body-parser'
-import * as dotenv from "dotenv"
+import { paymentRoute } from './routes/payment.routes';
+import { isAuthenticated } from './middlewares/auth.middleware';
+import express from 'express';
+import consola, { Consola} from 'consola';
+import cors from 'cors';
+import * as dotenv from "dotenv";
+// import PaymentService from "./service/payment.services";
 
-import { auth as AuthRoute } from "./routes/auth.routes";
+import { authRoute as AuthRoute } from "./routes/auth.routes";
 
 export class Server{
     public app: express.Application
     public logger: Consola = consola
-    private prisma: PrismaClient = new PrismaClient ()
 
     public constructor(){
         this.app = express()
     }
 
-    public start(){
+    public async start(){
         this.setConfig()
         this.setRequestLogger()
         this.setRoutes()
+        // const test = await PaymentService.initiatePayment("test@tester.com", 200)
+        // console.log(test);
+        
 
         this.app.listen(process.env.PORT, () => {
             this.logger.success(`Server started on port ${process.env.PORT}`)
@@ -47,24 +49,12 @@ export class Server{
 
     private setRoutes(){
         this.app.get('/', (req, res) => {
-            res.json({success: true, message: 'Welcome to p2p wallet. Login to continue.'})
+            res.json({success: true, message: 'Welcome to p2p wallet. Login or Signup to continue.'})
         })
 
         this.app.use('/api/v1/auth', AuthRoute)
         this.app.use('/api/v1/user', isAuthenticated, userRoute)
         this.app.use('/api/v1/account', isAuthenticated, accountRoute)
+        this.app.use('/api/v1/webhook', paymentRoute)
     }
-
-    // public async sendQuery(): Promise<void>{
-    //     let result = await this.prisma.user.create({
-    //         data:{
-    //             email: "testuser@gmail.com",
-    //             name: "Test User"
-    //         }
-    //     })
-
-    //     console.log(result);
-        
-    // }
-
 }
