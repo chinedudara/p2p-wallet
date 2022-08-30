@@ -31,7 +31,7 @@ model user {
 model account{
   id Int @id @default(autoincrement())
   account_number String
-  balance Decimal @default(0)
+  balance Float @default(0)
   user user @relation(fields: [user_id], references: [id])
   user_id Int @unique
   created_at DateTime @default(now())
@@ -43,9 +43,10 @@ model deposit_log{
   user_id Int
   user user @relation(fields: [user_id], references: [id])
   account_number String
-  amount Decimal
+  amount Float
   transaction_ref String
-  balance Decimal
+  transaction_data Json
+  balance Float
   status String
   created_at DateTime @default(now())
 }
@@ -56,9 +57,9 @@ model transfer_log{
   user user @relation(fields: [user_id], references: [id])
   source_account String
   destination_account String
-  amount Decimal
+  amount Float
   transaction_ref String
-  balance Decimal
+  balance Float
   status String
   created_at DateTime @default(now())
 }
