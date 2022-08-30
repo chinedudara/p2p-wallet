@@ -3,18 +3,13 @@ import { PrismaClient, user } from "@prisma/client";
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken"
 
-import { TestReq } from "../../typings/typings";
+import { RequestAuth } from "../../typings/typings";
+import { common_config } from "../config/app.config";
 
 const prisma = new PrismaClient()
 const AUTH_SECRET: any = process.env.AUTH_SECRET
 
-// interface RequestAuth extends Request{
-//     user: {
-//         id: string
-//     }
-// }
-
-export const isAuthenticated = async (req: TestReq, res: Response, next: NextFunction) => {
+export const isAuthenticated = async (req: RequestAuth, res: Response, next: NextFunction) => {
     if(!req.headers["authorization"]){
         return res
         .status(400)
@@ -40,7 +35,9 @@ export const isAuthenticated = async (req: TestReq, res: Response, next: NextFun
   let tokenBody: any;
 
   try {
-    tokenBody = jwt.verify(token, AUTH_SECRET);
+    console.log(common_config.tokenSecret);
+    
+    tokenBody = jwt.verify(token, common_config.tokenSecret);
   } catch {
     return res
       .status(400)
