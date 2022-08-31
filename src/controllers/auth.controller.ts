@@ -16,6 +16,13 @@ class AuthController {
   async LoginUser(req: RequestAuth, res: Response, next: NextFunction) {
     const { username, password }: { username: string; password: string } =
       req.body;
+
+      if(!username?.trim() || !password?.trim())
+    return res.status(400).json({
+      success: false,
+      error: "Username and Password must be provided",
+    });
+
     const user = await prisma.user.findUnique({
       where: { username },
     });
@@ -65,6 +72,12 @@ class AuthController {
       home_address,
       phone_number,
     }: signupData = req.body;
+
+    if(!email?.trim() || !username?.trim() || !password?.trim())
+    return res.status(400).json({
+      success: false,
+      error: "Email, Username and Password must be provided",
+    });
 
     if (pin) {
       if (pin.trim().length !== 4 || hasNonNumeric(pin))
