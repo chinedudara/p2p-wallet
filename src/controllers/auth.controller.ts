@@ -8,6 +8,7 @@ import { RequestAuth } from "../../typings/typings";
 import AccountService from "../service/account.services";
 import UserService from "../service/user.services";
 import { common_config } from "../config/app.config";
+import { signupData } from "../models/dataobject.model";
 
 const prisma = new PrismaClient();
 
@@ -32,7 +33,7 @@ class AuthController {
           { userId: user.id },
           common_config.tokenSecret,
           {
-            expiresIn: common_config.tokenTimespan
+            expiresIn: common_config.tokenTimespan,
           }
         );
         return res.status(200).json({
@@ -54,7 +55,7 @@ class AuthController {
   }
 
   async SignupUser(req: RequestAuth, res: Response, next: NextFunction) {
-    const {
+    let {
       email,
       username,
       password,
@@ -63,8 +64,22 @@ class AuthController {
       last_name,
       home_address,
       phone_number,
-    } = req.body;
-    
+    }: signupData = req.body;
+
+    if (pin) {
+      if (pin.trim().length !== 4 || hasNonNumeric(pin))
+        return res.status(400).json({
+          success: false,
+          error: "Transaction PIN must be 4 digit number",
+        });
+      pin = await argon2.hash(pin);
+    }
+
+    function hasNonNumeric(pin: string): boolean {
+      let nonNumeric = pin.split("").filter(x => isNaN(parseInt(x)))
+      return nonNumeric.length > 0
+    }
+
     const result = await UserService.CheckUserExist(username, email);
 
     if (result) {
@@ -93,7 +108,7 @@ class AuthController {
       { userId: user.id },
       common_config.tokenSecret,
       {
-        expiresIn: common_config.tokenTimespan
+        expiresIn: common_config.tokenTimespan,
       }
     );
     return res.status(200).json({

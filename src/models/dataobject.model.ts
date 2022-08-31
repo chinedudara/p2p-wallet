@@ -15,3 +15,14 @@ export interface TransferData {
   destination_account: string
   amount: number
 }
+
+export interface signupData {
+  email: string;
+  username: string;
+  password: string;
+  pin: string;
+  first_name: string;
+  last_name: string;
+  home_address: string;
+  phone_number: string;
+}
