@@ -6,7 +6,7 @@
 
 - API Production Link: [p2pwallet.herokuapp.com/](https://p2pwallet.herokuapp.com)
 - Github Repository: [chinedudara/p2p-wallet](https://github.com/chinedudara/p2p-wallet)
-- Postman Collection: [API Collections](https://www.getpostman.com/collections/329d718e05b072ea91b1)
+- Postman Collection: [View Postman API documentation](https://documenter.getpostman.com/view/6147899/VUxNRnb1)
 
 ---
 
