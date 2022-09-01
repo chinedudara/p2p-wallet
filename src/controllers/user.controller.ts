@@ -1,3 +1,4 @@
+import { UserViewData } from './../models/dataobject.model';
 import { Request, Response, NextFunction } from 'express'
 
 import HttpCodes from '../common/httpcodes';
@@ -13,10 +14,14 @@ class UserController {
         // }
     
         const result = await UserService.getUserByUsername(req.user?.username || "")
-        delete result.password;
-        console.log(req.user);
+
+        const data = UserService.exclude(result, 'password', 'pin', 'created_at', 'updated_at')
+
+        // delete result?.password;
+        // delete result?.pin;
+        // console.log(data);
         
-        res.status(HttpCodes.OK).json(result)
+        res.status(HttpCodes.OK).json(data)
     }
 }
 
