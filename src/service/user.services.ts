@@ -1,4 +1,5 @@
-import { PrismaClient, user } from "@prisma/client";
+import argon2 from 'argon2';
+import { PrismaClient, user, Prisma } from "@prisma/client";
 import { UserData, UserViewData } from "../models/dataobject.model";
 
 const prisma = new PrismaClient();
@@ -72,6 +73,65 @@ class UserService {
       },
     });
     return user;
+  }
+
+  async setTransactionPin(id: number, pin: string): Promise<any> {
+
+    const user = await this.getUserById(id)
+    if(!user)
+    return {
+      success: false,
+      message: "User not found"
+    }
+    if(user.pin)
+    return {
+      success: false,
+      message: "PIN already set. Use change PIN to alter"
+    }
+
+    pin = await argon2.hash(pin)
+    await this.User.update({
+      where: { id },
+      data: { pin, updated_at: new Date() },
+    });
+
+    return {
+      success: true,
+      message: "PIN set successfully"
+    };
+  }
+
+  async changeTransactionPin(id: number, oldPin: string, newPin: string): Promise<any> {
+
+    const user = await this.getUserById(id)
+    if(!user)
+    return {
+      success: false,
+      message: "User not found"
+    }
+
+    if(!user.pin)
+    return {
+      success: false,
+      message: "PIN not set. Use set pin"
+    }
+    
+    if(!(await argon2.verify(user.pin, oldPin)))
+    return {
+      success: false,
+      message: "Incorrect old PIN provided"
+    }
+
+    newPin = await argon2.hash(newPin)
+    await this.User.update({
+      where: { id },
+      data: { pin: newPin, updated_at: new Date() },
+    });
+
+    return {
+      success: true,
+      message: "PIN changed successfully"
+    };
   }
 
   exclude<user, Key extends keyof user>(

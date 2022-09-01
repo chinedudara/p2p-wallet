@@ -54,6 +54,8 @@ class AuthController {
         });
       }
     } catch (err) {
+      console.log(err);
+      
       return res.status(HttpCodes.SERVER_ERROR).json({
         success: false,
         error: "Internal server error",
