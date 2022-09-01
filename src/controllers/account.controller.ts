@@ -1,4 +1,3 @@
-import { account } from "@prisma/client";
 import { Request, Response, NextFunction } from "express";
 
 import HttpCodes from "../common/httpcodes";
@@ -32,12 +31,29 @@ class AccountController {
   }
 
   async transferToUser(req: RequestAuth, res: Response, next: NextFunction) {
-    const { recipient_account, amount } = req.body;
+    const {
+      recipient_account,
+      amount,
+      pin,
+    }: { recipient_account: string; amount: number; pin: string } = req.body;
+    if (!recipient_account?.trim() || !amount || !pin?.trim())
+      return res.status(400).json({
+        success: false,
+        error: "Recipient account, amount and PIN must be provided",
+      });
+      
+    if (typeof(amount) !== "number") {
+      return res.status(400).json({
+        success: false,
+        error: "Invalid amount provided",
+      });
+    }
 
     const transferResult = await AccountService.transferToAccount({
       source_account: req.user?.account_number || "",
       destination_account: recipient_account,
       amount,
+      pin,
     });
 
     res.status(HttpCodes.OK).json(transferResult);

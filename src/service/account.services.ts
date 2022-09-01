@@ -1,5 +1,5 @@
-import { account } from "./../../node_modules/.prisma/client/index.d";
-import { PrismaClient } from "@prisma/client";
+import argon2 from "argon2";
+import { PrismaClient, account } from "@prisma/client";
 import { TransferData } from "../models/dataobject.model";
 const prisma = new PrismaClient();
 
@@ -110,7 +110,9 @@ class AccountService {
     source_account,
     amount,
     destination_account,
+    pin
   }: TransferData): Promise<any> {
+    
     console.log(
       `Source-${source_account} :: destination-${destination_account}`
     );
@@ -129,6 +131,19 @@ class AccountService {
         message: "Invalid source or destination account",
       };
 
+      // const sourceUser = await userServices.getUserById(source.user_id)
+      if(!source.user.pin)
+      return {
+        status: false,
+        message: "User PIN must be set to authorize this transaction",
+      };
+
+      if(!(await argon2.verify(source.user.pin, pin)))
+      return {
+        status: false,
+        message: "Invalid transaction PIN",
+      };
+
     if (amount > source.balance)
       return {
         status: false,
@@ -140,9 +155,11 @@ class AccountService {
     const transRef = `${this.generateTimestamp()}${Math.floor(
       1000 + Math.random() * 9000
     )}`;
-    console.log(
-      `SourceBalance-${sourceBalance} :: destinationBalance-${destBalance}`
-    );
+
+    // console.log(
+    //   `SourceBalance-${sourceBalance} :: destinationBalance-${destBalance}`
+    // );
+
     const [sourceResult, destinationResult] = await prisma.$transaction([
       this.Account.update({
         where: { id: source.id },
@@ -173,7 +190,8 @@ class AccountService {
       balance: sourceResult.balance,
       recipient: status
         ? {
-            account: destination.user.username,
+            username: destination.user.username,
+            account: destination.account_number,
             email: destination.user.email,
             amount,
           }

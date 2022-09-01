@@ -17,11 +17,11 @@ class AuthController {
     const { username, password }: { username: string; password: string } =
       req.body;
 
-      if(!username?.trim() || !password?.trim())
-    return res.status(400).json({
-      success: false,
-      error: "Username and Password must be provided",
-    });
+    if (!username?.trim() || !password?.trim())
+      return res.status(400).json({
+        success: false,
+        error: "Username and Password must be provided",
+      });
 
     const user = await prisma.user.findUnique({
       where: { username },
@@ -30,7 +30,7 @@ class AuthController {
     if (!user) {
       return res.status(HttpCodes.USER_ERROR).json({
         success: false,
-        error: "User not found",
+        error: "Invalid username or password",
       });
     }
 
@@ -50,7 +50,7 @@ class AuthController {
       } else {
         return res.status(HttpCodes.USER_ERROR).json({
           success: false,
-          error: "Invalid password",
+          error: "Invalid username or password",
         });
       }
     } catch (err) {
@@ -73,11 +73,11 @@ class AuthController {
       phone_number,
     }: signupData = req.body;
 
-    if(!email?.trim() || !username?.trim() || !password?.trim())
-    return res.status(400).json({
-      success: false,
-      error: "Email, Username and Password must be provided",
-    });
+    if (!email?.trim() || !username?.trim() || !password?.trim())
+      return res.status(400).json({
+        success: false,
+        error: "Email, Username and Password must be provided",
+      });
 
     if (pin) {
       if (pin.trim().length !== 4 || hasNonNumeric(pin))
@@ -89,8 +89,8 @@ class AuthController {
     }
 
     function hasNonNumeric(pin: string): boolean {
-      let nonNumeric = pin.split("").filter(x => isNaN(parseInt(x)))
-      return nonNumeric.length > 0
+      let nonNumeric = pin.split("").filter((x) => isNaN(parseInt(x)));
+      return nonNumeric.length > 0;
     }
 
     const result = await UserService.CheckUserExist(username, email);

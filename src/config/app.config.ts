@@ -5,7 +5,7 @@ export const common_config = {
     port: process.env.PORT || 3000,
     debug: process.env.DEBUG || false,
     tokenSecret: process.env.AUTH_SECRET || "secret",
-    tokenTimespan: 300,
+    tokenTimespan: 900,
 }
 
 export const payment_integration = {
