@@ -3,4 +3,4 @@ import PaymentController from "../controllers/payment.controller";
 
 export const paymentRoute = Router();
 
-paymentRoute.post("/webhook", PaymentController.ProcessFunding);
+paymentRoute.post("/", PaymentController.ProcessFunding);

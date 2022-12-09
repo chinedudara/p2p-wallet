@@ -1,6 +1,6 @@
 import argon2 from 'argon2';
 import { PrismaClient, user, Prisma } from "@prisma/client";
-import { UserData, UserViewData } from "../models/dataobject.model";
+import { UserData } from "../models/dataobject.model";
 
 const prisma = new PrismaClient();
 

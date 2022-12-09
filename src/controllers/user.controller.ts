@@ -1,4 +1,3 @@
-import { UserViewData } from "./../models/dataobject.model";
 import { Request, Response, NextFunction } from "express";
 
 import HttpCodes from "../common/httpcodes";

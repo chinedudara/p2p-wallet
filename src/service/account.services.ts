@@ -37,11 +37,13 @@ class AccountService {
     return generatedAcc;
   }
 
-  generateTimestamp(): string {
+  generateReference(): string {
     const date = new Date();
     return `${date.getFullYear()}${
       date.getMonth() + 1
-    }${date.getDate()}${date.getHours()}${date.getMinutes()}${date.getSeconds()}`;
+    }${date.getDate()}${date.getHours()}${date.getMinutes()}${date.getSeconds()}${Math.floor(
+      1000 + Math.random() * 9000
+    )}`;
   }
 
   async fetchAccountByNumber(account_number: string): Promise<any> {
@@ -84,9 +86,7 @@ class AccountService {
         message: "Top-up failed",
       };
 
-    const transRef = `${this.generateTimestamp()}${Math.floor(
-      1000 + Math.random() * 9000
-    )}`;
+    const transRef = this.generateReference()
     await this.DepositLog.create({
       data: {
         user_id: account.user_id,
@@ -152,9 +152,7 @@ class AccountService {
 
     const sourceBalance: number = source.balance - amount;
     const destBalance: number = destination.balance + amount;
-    const transRef = `${this.generateTimestamp()}${Math.floor(
-      1000 + Math.random() * 9000
-    )}`;
+    const transRef = this.generateReference();
 
     // console.log(
     //   `SourceBalance-${sourceBalance} :: destinationBalance-${destBalance}`

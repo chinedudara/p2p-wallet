@@ -1,8 +1,6 @@
-![Moni Logo](https://global-uploads.webflow.com/619220ea93ebf686940fc117/61cec870f1c081dc9efc2cbd_Moni%20logo.svg)
-
 # **Peer-To-Peer Wallet**
 
-#### **Submission Links**
+#### **Links**
 
 - API Production Link: [p2pwallet.herokuapp.com/](https://p2pwallet.herokuapp.com)
 - Github Repository: [chinedudara/p2p-wallet](https://github.com/chinedudara/p2p-wallet)
@@ -10,13 +8,19 @@
 
 ---
 
-This documents provides information about my implementation of the Moni Backend Engineering Assessment
-which requires that I build a simple P2P wallet system with the following features:
+This documents provides information about my implementation of a simple P2P wallet system which can be scaled for larger use-cases. This implementation assumes the following requirements:
 
-- Users should be able to fund their wallets on the system
-- Users should be able to send funds to other users on the system
+- Deposits: Users should be able to fund their wallets on the system
+- Transfers: Users should be able to send funds to other users on the system
+- Transaction History: Users can view their transaction history for any given date range
 
-The document is divided into several sections, listed below
+This document is divided into several sections:
+
+- [High Level System Design](#high-level-system-design)
+- [Design Assumptions](#design-assumptions)
+- [Implementation Details](#implementation-details)
+- [Database Models](#database-models)
+- [Data Flow Diagram](#data-flow-diagram)
 
 ## **High Level System Design**
 
@@ -26,7 +30,7 @@ The diagram below shows the various components of the system as can be inferred 
 
 The API services users' request from both mobile and web platforms.
 
-The database system used here is PostgreSQL. The app and database are hosted on Heroku.
+The database system used here is PostgreSQL. The API and database are hosted on Heroku.
 
 ## **Design Assumptions**
 
@@ -36,7 +40,7 @@ The database system used here is PostgreSQL. The app and database are hosted on 
 - A single User can only have one Wallet
   > This assumption is made primarily for the sake of simplicity. Since the generated account number is unique, the system can easily be extended to allow for multiple wallets for a single user (even in multiple currencies)
 - The recipient of a transfer can be identified either by his account number or username
-- The system integrates **Paystack** (or a similar service) for receiving inflows into the system
+- The system integrates **Paystack** (or a similar service) for receiving inflows (deposits) into the system
 - To confirm user payments, the system provides a webhook (POST endpoint) which listens for an event from the payment provider(Paystack). It receives data on all payments made and proceeds with the required account funding action.
   > This is a publicly available URL and is secured by HMAC SHA512 signature validation to verify the event originated from the payment provider. It can be further protected by IP whitelisting. Some metadata has to be sent along with received event payload to help identify the user account for which the payment was made.
 - Money transfer between users is done at the virtual account level.
@@ -58,7 +62,7 @@ The account feature, which we might also refer to as the virtual wallet of the s
 
 ### **Deposit Feature:**
 
-The deposit feature is how users are able to fund their account (wallet) with digital assets (the `money` or `value` of the system). This feature handles the integration with payment providers (like Paystack) to convert users assets in monetary value to the form used within our system.
+The deposit feature is how users are able to fund their account (wallet) with digital assets (the `money` or `value` of the system). This feature handles the integration with payment providers (like Paystack or Stripe) to convert users assets in monetary value to the form used within our system.
 
 ### **Transfer Feature:**
 
@@ -80,14 +84,14 @@ The transaction types available in the system are:
 
 ## **Database Models**
 
-This section describes the various tables in which data is stored and the relationship between them. Below an image showing the tables. For simplicity the relationships between tables are kept minimal. 
+This section describes the various tables in which data is stored and the relationship between them. Below an image showing the tables. For simplicity the relationships between tables are kept minimal.
 ![Database Schema](https://i.ibb.co/ygD1fnG/p2p-wallet-ER-diagram.png)
 
 > Note that the diagram does not explicitly specify the relationship that exists between the tables
 
 ### **User Table**
 
-The users table as shown in the diagram above holds the primary data of each user, as collected during signup. The `id` is automatically generated and the `password` is encrypted before being stored to the database.
+The users table as shown in the diagram above holds the primary data of each user, as collected during sign-up. The `id` is automatically generated and the `password` is hashed before being stored to the database.
 
 ### **Account Table**
 

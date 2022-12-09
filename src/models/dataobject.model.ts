@@ -28,19 +28,12 @@ export interface signupData {
   phone_number: string;
 }
 
-export type UserViewData = {
-  id: number;
+export interface paymentData {
   email: string;
-  username: string;
-  first_name: string;
-  last_name: string;
-  home_address: string;
-  phone_number: string;
-  account: {
-    id: number;
-    account_number: string;
-    balance: number;
-  };
+  amount: number;
+  reference: string;
+  // callback_url: string;
+  metadata: string;
 }
 
 export interface accountViewData {
